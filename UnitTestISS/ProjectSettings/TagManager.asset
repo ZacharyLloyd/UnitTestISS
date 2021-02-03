@@ -5,9 +5,9 @@ TagManager:
   serializedVersion: 2
   tags:
   - Enemy
-  - PBase
-  - EBase
   - Spawn
+  - fBase
+  - eBase
   layers:
   - Default
   - TransparentFX

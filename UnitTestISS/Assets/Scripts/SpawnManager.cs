@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class SpawnManager : MonoBehaviour
 {
-    //Reference for spawnmanager
+    //Singleton for reference to SpawnManager
     public static SpawnManager Instance;
     //Position that will be used when spawning
     [HideInInspector]public Transform playerLastPosition;
@@ -15,9 +15,14 @@ public class SpawnManager : MonoBehaviour
     public List<GameObject> enemies = new List<GameObject>();
     //All spawn points on level
     public List<GameObject> spawnpoints = new List<GameObject>();
+    //All friendly bases on level
+    public List<GameObject> friendlyBase = new List<GameObject>();
+    //All enemy bases on level
+    public List<GameObject> enemyBase = new List<GameObject>();
     //Awake is called before the anything else
     private void Awake()
     {
+        //Singleton set up
         #region
         if (Instance == null)
         {
@@ -33,6 +38,7 @@ public class SpawnManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        //Adding everything to lists to access
         #region
         foreach (GameObject player in GameObject.FindGameObjectsWithTag("Player"))
         {
@@ -46,12 +52,14 @@ public class SpawnManager : MonoBehaviour
         {
             spawnpoints.Add(spawn);
         }
+       foreach(GameObject fBase in GameObject.FindGameObjectsWithTag("fBase"))
+        {
+            friendlyBase.Add(fBase);
+        }
+       foreach(GameObject eBase in GameObject.FindGameObjectsWithTag("eBase"))
+        {
+            enemyBase.Add(eBase);
+        }
         #endregion
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }
