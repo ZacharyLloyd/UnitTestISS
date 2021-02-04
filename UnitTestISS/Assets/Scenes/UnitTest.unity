@@ -2126,6 +2126,18 @@ MonoBehaviour:
   spawnpoints: []
   friendlyBase: []
   enemyBase: []
+  pref1: {fileID: 816908756}
+  pref2: {fileID: 325070235}
+  pref3: {fileID: 378137517}
+  importancePref1: {fileID: 673518598}
+  importancePref2: {fileID: 1031256868}
+  importancePref3: {fileID: 667937921}
+  pref1Value: 0
+  pref2Value: 0
+  pref3Value: 0
+  importancePref1Value: 0
+  importancePref2Value: 0
+  importancePref3Value: 0
 --- !u!4 &133269214
 Transform:
   m_ObjectHideFlags: 0
@@ -5169,7 +5181,7 @@ GameObject:
   - component: {fileID: 325070234}
   - component: {fileID: 325070235}
   m_Layer: 5
-  m_Name: Slider (1)
+  m_Name: Pref2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5190,7 +5202,7 @@ RectTransform:
   - {fileID: 279060258}
   - {fileID: 1201415998}
   m_Father: {fileID: 1056442910}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
@@ -6301,7 +6313,7 @@ GameObject:
   - component: {fileID: 378137516}
   - component: {fileID: 378137517}
   m_Layer: 5
-  m_Name: Slider (2)
+  m_Name: Pref3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6322,7 +6334,7 @@ RectTransform:
   - {fileID: 1335030265}
   - {fileID: 1650909291}
   m_Father: {fileID: 1056442910}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
@@ -6670,7 +6682,7 @@ GameObject:
   - component: {fileID: 401118443}
   - component: {fileID: 401118442}
   m_Layer: 5
-  m_Name: Button
+  m_Name: SpawnButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9272,7 +9284,7 @@ GameObject:
   - component: {fileID: 667937920}
   - component: {fileID: 667937921}
   m_Layer: 5
-  m_Name: Slider (5)
+  m_Name: ImportancePerf3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9363,7 +9375,7 @@ GameObject:
   - component: {fileID: 673518597}
   - component: {fileID: 673518598}
   m_Layer: 5
-  m_Name: Slider (3)
+  m_Name: ImportancePerf1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11493,7 +11505,7 @@ GameObject:
   - component: {fileID: 816908755}
   - component: {fileID: 816908756}
   m_Layer: 5
-  m_Name: Slider
+  m_Name: Pref1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11514,7 +11526,7 @@ RectTransform:
   - {fileID: 1648927308}
   - {fileID: 690605752}
   m_Father: {fileID: 1056442910}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
@@ -14015,7 +14027,7 @@ GameObject:
   - component: {fileID: 1031256867}
   - component: {fileID: 1031256868}
   m_Layer: 5
-  m_Name: Slider (4)
+  m_Name: ImportancePerf2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -14474,10 +14486,10 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 401118441}
+  - {fileID: 2130511084}
   - {fileID: 816908755}
   - {fileID: 325070234}
   - {fileID: 378137516}
-  - {fileID: 2130511084}
   - {fileID: 673518597}
   - {fileID: 1031256867}
   - {fileID: 667937920}
@@ -27623,7 +27635,7 @@ GameObject:
   - component: {fileID: 2130511086}
   - component: {fileID: 2130511085}
   m_Layer: 5
-  m_Name: Button (1)
+  m_Name: SaveButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -27642,7 +27654,7 @@ RectTransform:
   m_Children:
   - {fileID: 720675372}
   m_Father: {fileID: 1056442910}
-  m_RootOrder: 4
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -27691,7 +27703,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2130511086}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 133269213}
+        m_MethodName: SaveValues
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &2130511086
