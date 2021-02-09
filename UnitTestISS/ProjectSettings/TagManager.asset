@@ -8,6 +8,12 @@ TagManager:
   - Spawn
   - fBase
   - eBase
+  - pref1
+  - pref2
+  - pref3
+  - iPref1
+  - iPref2
+  - iPref3
   layers:
   - Default
   - TransparentFX
