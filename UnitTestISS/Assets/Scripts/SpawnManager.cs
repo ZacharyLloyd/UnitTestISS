@@ -5,30 +5,23 @@ using UnityEngine.UI;
 
 public class SpawnManager : MonoBehaviour
 {
-    //Ideal position for player to spawn which will be used to find the neariest spawn point to this location
-    [SerializeField] Transform idealSpawnLocation;
-    //Actual spawn point the player will be instantiated on
-    [SerializeField] Transform pointToSpawnOn;
+    //Ideal location to spawn
+    Vector3 idealLoction = Vector3.zero;
+    //Actual point player will spawn at this will be found when finding the closest spawn point to the idealLocation
+    Vector3 pointToSpawn = Vector3.zero;
 
-    //May get removed
-    Vector3 idealLoction;
-    Vector3 sumOf2Calcs;
-    float totalImportance;
-
-
-    [SerializeField] Vector3 pref1Calc;
-    [SerializeField] Vector3 pref2Calc;
-    [SerializeField] Vector3 pref3Calc;
-
-    //May get removed
-    public GameObject objectToSpawn;
-    public GameObject hishestSpawn;
-
+    //Vectors for calculating each prefernce point on level
+    [SerializeField] Vector3 pref1Calc = Vector3.zero;
+    [SerializeField] Vector3 pref2Calc = Vector3.zero;
+    [SerializeField] Vector3 pref3Calc = Vector3.zero;
 
     //Singleton for reference to SpawnManager
     public static SpawnManager Instance;
     //Position that will be used when spawning
     public Transform playerLastPosition;
+
+    //Variables for lists needed to track data
+    #region
     [Header("Lists needed to track data")]
     //All players on level
     public List<GameObject> players = new List<GameObject>();
@@ -40,7 +33,9 @@ public class SpawnManager : MonoBehaviour
     public List<GameObject> friendlyBase = new List<GameObject>();
     //All enemy bases on level
     public List<GameObject> enemyBase = new List<GameObject>();
-
+    #endregion
+    //Variables for sliders themselves
+    #region
     [Header("UI pieces needed")]
     //Slider that will represent how far or close the player wants to spawn from enemies
     public Slider pref1;
@@ -54,7 +49,9 @@ public class SpawnManager : MonoBehaviour
     public Slider importancePref2;
     //Importance factor for pref3
     public Slider importancePref3;
-
+    #endregion
+    //Varibles for slider values
+    #region
     [Header("Variables to hold value for sliders")]
     //Value for pref1 to be saved
     public float pref1Value;
@@ -68,6 +65,7 @@ public class SpawnManager : MonoBehaviour
     public float importancePref2Value;
     //Importance value for pref3 to be saved
     public float importancePref3Value;
+    #endregion
 
     //Awake is called before the anything else
     void Awake()
@@ -175,26 +173,97 @@ public class SpawnManager : MonoBehaviour
     //Used to calculate the ideal spawn location
     void CalculateIdealSpawn()
     {
-        //enemy calc
-        pref1Calc = Vector3.Lerp(playerLastPosition.position, enemies[0].gameObject.transform.position, pref1Value );
-        //base calc
-        pref2Calc = Vector3.Lerp(friendlyBase[0].gameObject.transform.position, enemyBase[0].gameObject.transform.position, pref2Value );
-        //elavation calc
-        pref3Calc = Vector3.Lerp(playerLastPosition.position, hishestSpawn.transform.position, pref3Value ) ;
+        //Variables for function
+        #region
+        //Overall vector for enemies
+        Vector3 cumulitativeVectorEnemies = Vector3.zero;
+        //Average vector for enemies
+        Vector3 averageVectorEnemies = Vector3.zero;
+        //Number that will be used to divide cumulitativeVectorEnemies to find an average
+        int numberOfEnemies = enemies.Count;
+        //Overall vector for friendly bases
+        Vector3 cumulitativeVectorFriendlyBase = Vector3.zero;
+        //Average vector for friendly bases
+        Vector3 averageVectorFriendlyBase = Vector3.zero;
+        //Overall vector for enemy bases
+        Vector3 cumulitativeVectorEnemyBase = Vector3.zero;
+        //Average vector for enemy bases
+        Vector3 averageVectorEnemyBase = Vector3.zero;
+        //Number that will be used to divide cumulitativeVectorFriendlyBases to find an average
+        int numberOfFriendlyBases = friendlyBase.Count;
+        //Number that will be used to divide cumulitativeVectorEnemyBases to find an average
+        int numberOfEnemyBases = enemyBase.Count;
+        //Keep track of prevous Y value for finding highest spawn point
+        float previousYValue = 0;
+        //Y value to keep for elevationVector
+        float yValueToKeep = 0;
+        //Vector that will be used to lerp to find a calculated point on level
+        Vector3 elevationVector = Vector3.zero;
+        #endregion
 
-        //This may get removed
-        totalImportance = importancePref1Value + importancePref2Value + importancePref3Value;
+        //pref1Calc
+        #region
+        //Foreach for all enemy positions
+        foreach (GameObject enemy in enemies)
+        {
+            
+            cumulitativeVectorEnemies += enemy.transform.position;
+            //enemyPositionToAdd.transform.position = enemyCalc.transform.position
+
+        }
+        averageVectorEnemies = cumulitativeVectorEnemies / numberOfEnemies;
+        //enemy calc
+        pref1Calc = Vector3.Lerp(playerLastPosition.position, averageVectorEnemies, pref1Value);
+        #endregion
+
+        //pref2Calc
+        #region
+        //Foreach for all friendly bases
+        foreach (GameObject fBase in friendlyBase)
+        {
+            cumulitativeVectorFriendlyBase += fBase.transform.position;
+        }
+        averageVectorFriendlyBase = cumulitativeVectorFriendlyBase / numberOfFriendlyBases;
         
-        //This may get removed
-        sumOf2Calcs = Vector3.Lerp(pref1Calc, pref2Calc, totalImportance);
-        idealLoction = Vector3.Lerp(sumOf2Calcs, pref3Calc, totalImportance);
+        //Foreach for all enemy bases
+        foreach (GameObject eBase in enemyBase)
+        {
+            cumulitativeVectorEnemyBase += eBase.transform.position;
+        }
+        averageVectorEnemyBase = cumulitativeVectorEnemyBase / numberOfEnemyBases;
+        //base calc
+        pref2Calc = Vector3.Lerp(averageVectorFriendlyBase, averageVectorEnemyBase, pref2Value);
+        #endregion
+
+        //pref3Calc
+        #region
+        foreach (GameObject spawnPoint in spawnpoints)
+        {
+
+            if (previousYValue <= spawnPoint.transform.position.y)
+            {
+                previousYValue = spawnPoint.transform.position.y;
+            }
+            else
+            {
+                yValueToKeep = spawnPoint.transform.position.y;
+                elevationVector = new Vector3(0, yValueToKeep, 0);
+            }
+               
+        }
+        //elavation calc
+        pref3Calc = Vector3.Lerp(playerLastPosition.position, elevationVector, pref3Value );
+        #endregion
+
+        //Find the ideal location to spawn using prefCalcs and importance values
+        idealLoction = ((pref1Calc * importancePref1Value) + (pref2Calc * importancePref2Value) + (pref3Calc * importancePref3Value));
 
         //Instantiate(objectToSpawn, pref1Calc, Quaternion.identity);
         //Instantiate(objectToSpawn, pref2Calc, Quaternion.identity);
         //Instantiate(objectToSpawn, pref3Calc, Quaternion.identity);
         //Instantiate(objectToSpawn, idealLoction, Quaternion.identity);
 
-        Debug.Log($"{pref1Calc},\n{pref2Calc},\n{pref3Calc}\n{sumOf2Calcs}\n{idealLoction}");
+        Debug.Log($"{pref1Calc},\n{pref2Calc},\n{pref3Calc}\n{idealLoction}");
 
         //Debug.DrawLine(playerLastPosition.position, enemies[0].gameObject.transform.position, Color.green, 10f);
         //Debug.DrawLine(friendlyBase[0].gameObject.transform.position, enemyBase[0].gameObject.transform.position, Color.red, 10f);
