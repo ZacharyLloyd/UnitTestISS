@@ -175,6 +175,7 @@ public class SpawnManager : MonoBehaviour
     void CalculateIdealSpawn()
     {
         playerLastPosition = GameObject.FindGameObjectWithTag("Player").transform.position;
+        //Debug.Log(playerLastPosition);
         //Variables for function
         #region
         //Overall vector for enemies
@@ -260,6 +261,7 @@ public class SpawnManager : MonoBehaviour
 
         //Find the ideal location to spawn using prefCalcs and importance values
         idealLoction = ((pref1Calc * importancePref1Value) + (pref2Calc * importancePref2Value) + (pref3Calc * importancePref3Value));
+        Instantiate(objToSpawn, idealLoction, Quaternion.identity);
 
         Debug.Log($"{pref1Calc},\n{pref2Calc},\n{pref3Calc}\n{idealLoction}");
 
@@ -271,13 +273,13 @@ public class SpawnManager : MonoBehaviour
 
         foreach(GameObject spawn in spawnpoints)
         {
-            float distance = Vector3.Distance(spawn.transform.position, idealLoction);
+            float distance = Vector3.Distance(idealLoction, spawn.transform.position);
             if(distance < minDistance)
             {
+                //Debug.Log(distance);
                 minDistance = distance;
                 pointToSpawn = spawn.transform.position;
-                Debug.Log($"Ideal Location is: {idealLoction} : Spawning to {pointToSpawn}");
-                Debug.Log(playerLastPosition);
+                //Debug.Log($"Ideal Location is: {idealLoction} : Spawning to {pointToSpawn}");
             }
         }
     }
