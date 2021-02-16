@@ -10,6 +10,8 @@ public class SpawnManager : MonoBehaviour
     //Actual point player will spawn at this will be found when finding the closest spawn point to the idealLocation
     Vector3 pointToSpawn = Vector3.zero;
 
+    public GameObject objToSpawn;
+
     //Vectors for calculating each prefernce point on level
     [SerializeField] Vector3 pref1Calc = Vector3.zero;
     [SerializeField] Vector3 pref2Calc = Vector3.zero;
@@ -18,7 +20,7 @@ public class SpawnManager : MonoBehaviour
     //Singleton for reference to SpawnManager
     public static SpawnManager Instance;
     //Position that will be used when spawning
-    public Transform playerLastPosition;
+    Vector3 playerLastPosition;
 
     //Variables for lists needed to track data
     #region
@@ -141,7 +143,6 @@ public class SpawnManager : MonoBehaviour
         PlayerPrefs.SetFloat("importancePref2", importancePref2Value);
         PlayerPrefs.SetFloat("importancePref3", importancePref3Value);
         #endregion
-        CalculateIdealSpawn();
 
     }
     //Load function for values to be assigned based off last save
@@ -173,6 +174,7 @@ public class SpawnManager : MonoBehaviour
     //Used to calculate the ideal spawn location
     void CalculateIdealSpawn()
     {
+        playerLastPosition = GameObject.FindGameObjectWithTag("Player").transform.position;
         //Variables for function
         #region
         //Overall vector for enemies
@@ -199,6 +201,7 @@ public class SpawnManager : MonoBehaviour
         float yValueToKeep = 0;
         //Vector that will be used to lerp to find a calculated point on level
         Vector3 elevationVector = Vector3.zero;
+        
         #endregion
 
         //pref1Calc
@@ -213,7 +216,7 @@ public class SpawnManager : MonoBehaviour
         }
         averageVectorEnemies = cumulitativeVectorEnemies / numberOfEnemies;
         //enemy calc
-        pref1Calc = Vector3.Lerp(playerLastPosition.position, averageVectorEnemies, pref1Value);
+        pref1Calc = Vector3.Lerp(playerLastPosition, averageVectorEnemies, pref1Value);
         #endregion
 
         //pref2Calc
@@ -252,33 +255,37 @@ public class SpawnManager : MonoBehaviour
                
         }
         //elavation calc
-        pref3Calc = Vector3.Lerp(playerLastPosition.position, elevationVector, pref3Value );
+        pref3Calc = Vector3.Lerp(playerLastPosition, elevationVector, pref3Value );
         #endregion
 
         //Find the ideal location to spawn using prefCalcs and importance values
         idealLoction = ((pref1Calc * importancePref1Value) + (pref2Calc * importancePref2Value) + (pref3Calc * importancePref3Value));
 
-        //Instantiate(objectToSpawn, pref1Calc, Quaternion.identity);
-        //Instantiate(objectToSpawn, pref2Calc, Quaternion.identity);
-        //Instantiate(objectToSpawn, pref3Calc, Quaternion.identity);
-        //Instantiate(objectToSpawn, idealLoction, Quaternion.identity);
-
         Debug.Log($"{pref1Calc},\n{pref2Calc},\n{pref3Calc}\n{idealLoction}");
 
-        //Debug.DrawLine(playerLastPosition.position, enemies[0].gameObject.transform.position, Color.green, 10f);
-        //Debug.DrawLine(friendlyBase[0].gameObject.transform.position, enemyBase[0].gameObject.transform.position, Color.red, 10f);
-        //Debug.DrawLine(playerLastPosition.position, hishestSpawn.transform.position, Color.blue, 10f);
-        //Debug.DrawLine(pref1Calc, pref2Calc, Color.yellow, 10f);
-        //Debug.DrawLine(sumOf2Calcs, pref3Calc, Color.gray, 10f);
     }
     //Used to find the neareest spawn point to the ideal spawn found
     void CalculateNearestSpawn()
     {
+        float minDistance = Mathf.Infinity;
 
+        foreach(GameObject spawn in spawnpoints)
+        {
+            float distance = Vector3.Distance(spawn.transform.position, idealLoction);
+            if(distance < minDistance)
+            {
+                minDistance = distance;
+                pointToSpawn = spawn.transform.position;
+                Debug.Log($"Ideal Location is: {idealLoction} : Spawning to {pointToSpawn}");
+                Debug.Log(playerLastPosition);
+            }
+        }
     }
     //Instantiate player on the nearest spawn point to the ideal spawn found
-    void SpawnPlayer()
+    public void SpawnPlayer()
     {
-
+        CalculateIdealSpawn();
+        CalculateNearestSpawn();
+        Instantiate(objToSpawn, pointToSpawn, Quaternion.identity);
     }
 }
