@@ -20,7 +20,7 @@ public class SpawnManager : MonoBehaviour
     //Singleton for reference to SpawnManager
     public static SpawnManager Instance;
     //Position that will be used when spawning
-    Vector3 playerLastPosition;
+    [SerializeField]Vector3 playerLastPosition;
 
     //Variables for lists needed to track data
     #region
@@ -261,9 +261,9 @@ public class SpawnManager : MonoBehaviour
 
         //Find the ideal location to spawn using prefCalcs and importance values
         idealLoction = ((pref1Calc * importancePref1Value) + (pref2Calc * importancePref2Value) + (pref3Calc * importancePref3Value));
-        Instantiate(objToSpawn, idealLoction, Quaternion.identity);
+        //Instantiate(objToSpawn, idealLoction, Quaternion.identity);
 
-        Debug.Log($"{pref1Calc},\n{pref2Calc},\n{pref3Calc}\n{idealLoction}");
+        //Debug.Log($"{pref1Calc},\n{pref2Calc},\n{pref3Calc}\n{idealLoction}");
 
     }
     //Used to find the neareest spawn point to the ideal spawn found
@@ -279,7 +279,7 @@ public class SpawnManager : MonoBehaviour
                 //Debug.Log(distance);
                 minDistance = distance;
                 pointToSpawn = spawn.transform.position;
-                //Debug.Log($"Ideal Location is: {idealLoction} : Spawning to {pointToSpawn}");
+                Debug.Log($"Ideal Location is: {idealLoction} : Spawning to {pointToSpawn}");
             }
         }
     }
