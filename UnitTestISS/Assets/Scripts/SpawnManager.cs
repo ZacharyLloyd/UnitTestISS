@@ -174,8 +174,8 @@ public class SpawnManager : MonoBehaviour
     //Used to calculate the ideal spawn location
     void CalculateIdealSpawn()
     {
+        //get updated player position to use
         playerLastPosition = GameObject.FindGameObjectWithTag("Player").transform.position;
-        //Debug.Log(playerLastPosition);
         //Variables for function
         #region
         //Overall vector for enemies
@@ -210,13 +210,14 @@ public class SpawnManager : MonoBehaviour
         //Foreach for all enemy positions
         foreach (GameObject enemy in enemies)
         {
-            
+            //add up all of the positions of the enemies
             cumulitativeVectorEnemies += enemy.transform.position;
-            //enemyPositionToAdd.transform.position = enemyCalc.transform.position
 
         }
+        //average out the vector to be used when calculating this preference and divide by the number of enemies on the level
         averageVectorEnemies = cumulitativeVectorEnemies / numberOfEnemies;
         //enemy calc
+        //Lerp the players position and the average position for the enemy and go towards one or the other based on the pref1Value
         pref1Calc = Vector3.Lerp(playerLastPosition, averageVectorEnemies, pref1Value);
         #endregion
 
@@ -225,59 +226,69 @@ public class SpawnManager : MonoBehaviour
         //Foreach for all friendly bases
         foreach (GameObject fBase in friendlyBase)
         {
+            //add up all of the positions of the friendly bases
             cumulitativeVectorFriendlyBase += fBase.transform.position;
         }
+        //average out the vector to be used when calculating this preference and divide by the number of friendly bases on the level
         averageVectorFriendlyBase = cumulitativeVectorFriendlyBase / numberOfFriendlyBases;
         
         //Foreach for all enemy bases
         foreach (GameObject eBase in enemyBase)
         {
+            //add up all of the positions of the enemy bases
             cumulitativeVectorEnemyBase += eBase.transform.position;
         }
+        //average out the vector to be used when calculating this preference and divide by the number of enemy bases on the level
         averageVectorEnemyBase = cumulitativeVectorEnemyBase / numberOfEnemyBases;
         //base calc
+        //Lerp the average position for the friendly bases and the average position for the enemy bases and go towards one or the other based on the pref2Value
         pref2Calc = Vector3.Lerp(averageVectorFriendlyBase, averageVectorEnemyBase, pref2Value);
         #endregion
 
         //pref3Calc
         #region
+        //Foreach to find the spawn point with the greatest y value
         foreach (GameObject spawnPoint in spawnpoints)
         {
-
             if (previousYValue <= spawnPoint.transform.position.y)
             {
+                //Set the previousYValue to the spawnpoint we are cycling through
                 previousYValue = spawnPoint.transform.position.y;
             }
             else
             {
+                //Set the yValueToKeep for the spawn point that was found
                 yValueToKeep = spawnPoint.transform.position.y;
+                //Set the elevationVector
                 elevationVector = new Vector3(0, yValueToKeep, 0);
             }
                
         }
         //elavation calc
+        //Lerp the players position and the spawn point with the greatest y value and go towards one or the other based on the pref3Value
         pref3Calc = Vector3.Lerp(playerLastPosition, elevationVector, pref3Value );
         #endregion
 
-        //Find the ideal location to spawn using prefCalcs and importance values
+        //Find the ideal location to spawn using prefCalcs multiplied by the importance values and adding them all together
         idealLoction = ((pref1Calc * importancePref1Value) + (pref2Calc * importancePref2Value) + (pref3Calc * importancePref3Value));
-        //Instantiate(objToSpawn, idealLoction, Quaternion.identity);
-
-        //Debug.Log($"{pref1Calc},\n{pref2Calc},\n{pref3Calc}\n{idealLoction}");
-
     }
     //Used to find the neareest spawn point to the ideal spawn found
     void CalculateNearestSpawn()
     {
+        //Set a minDistance for when we try and find the closest spawn point
         float minDistance = Mathf.Infinity;
-
+        //Foreach to cycle through all the spawnpoints to find the closest one to the idealLocation
         foreach(GameObject spawn in spawnpoints)
         {
+            //Find the distance between the ideal location and the spawn point to find the closest one out of all spawn points
             float distance = Vector3.Distance(idealLoction, spawn.transform.position);
+            Debug.Log(distance);
+            //Is the distance we are on smaller than the previous distance
             if(distance < minDistance)
             {
-                //Debug.Log(distance);
+                //Set the min distance to the distance of the spawn point that was compared
                 minDistance = distance;
+                //Set the pointToSpawn
                 pointToSpawn = spawn.transform.position;
                 Debug.Log($"Ideal Location is: {idealLoction} : Spawning to {pointToSpawn}");
             }
